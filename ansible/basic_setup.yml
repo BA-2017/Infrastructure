@@ -1,0 +1,30 @@
+---
+- hosts: generic
+  become: true
+  tasks:
+    - name: Install required packages for hyper-v
+      apt: name={{item}} state=installed
+      with_items:
+        - linux-virtual-lts-xenial
+        - linux-tools-virtual-lts-xenial
+        - linux-cloud-tools-virtual-lts-xenial
+
+    - name: Copy dDNS script
+      copy:
+        src: files/ddns.sh
+        dest: /usr/bin/ddns.sh
+        owner: root
+        group: root
+        mode: "u+x"
+
+    - name: Replace DNS record id in dDNS script
+      replace:
+        destfile: "/usr/bin/ddns.sh"
+        regexp: '{RECORD_ID}'
+        replace: '{{dns_record_id}}'
+
+    - name: Setup dDNS crontab
+      cron:
+        name: "Set dDNS"
+        minute: "*"
+        job: "ddns.sh"

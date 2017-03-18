@@ -1,0 +1,7 @@
+[generic]
+linuxn.zhaw.tk ansible_become=true ansible_ssh_host=160.85.37.75 dns_record_id=11227838
+
+[linux]
+linux1 ansible_ssh_host=linux1.zhaw.tk dns_record_id=11245981
+linux2 ansible_ssh_host=linux2.zhaw.tk dns_record_id=11245982
+linux3 ansible_ssh_host=linux3.zhaw.tk dns_record_id=11245988

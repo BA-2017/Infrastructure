@@ -4,7 +4,9 @@ TOKEN="4BxFCzfeFBv2LvMWPv1o4YT8ew38fR87"  # The API v2 OAuth token
 ACCOUNT_ID="52675"        # Replace with your account ID
 ZONE_ID="zhaw.tk"  # The zone ID is the name of the zone (or domain)
 RECORD_ID="{RECORD_ID}"       # Replace with the Record ID
-IP=`curl -s http://icanhazip.com/`
+IP=`/sbin/ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}'`
+
+echo "Set DNS record for `hostname` to $IP"
 
 curl -H "Authorization: Bearer $TOKEN" \
      -H "Content-Type: application/json" \

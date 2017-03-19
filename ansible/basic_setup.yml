@@ -38,4 +38,4 @@
       cron:
         name: "Set dDNS"
         minute: "*"
-        job: "ddns.sh"
+        job: "ddns.sh > /var/log/ddns.log 2>&1"

@@ -6,11 +6,11 @@ ZONE_ID="zhaw.tk"  # The zone ID is the name of the zone (or domain)
 RECORD_ID="{RECORD_ID}"       # Replace with the Record ID
 IP=`/sbin/ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}'`
 
-echo "Set DNS record for `hostname` to $IP"
+echo "`date '+%FT%T'`  Set DNS record for '`hostname`' to '$IP'"
 
-curl -H "Authorization: Bearer $TOKEN" \
+curl -s -H "Authorization: Bearer $TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -X "PATCH" \
      -i "https://api.dnsimple.com/v2/$ACCOUNT_ID/zones/$ZONE_ID/records/$RECORD_ID" \
-     -d "{\"content\":\"$IP\"}"
+     -d "{\"content\":\"$IP\"}" > /dev/null

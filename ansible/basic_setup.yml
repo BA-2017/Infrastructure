@@ -1,7 +1,14 @@
+# 1. install python on target hosts
+# 2. run playbook: ansible-playbook -i hosts basic_setup.yml -K
 ---
-- hosts: generic
+- hosts: linux
   become: true
   tasks:
+    - name: Update all packages to the latest version
+      apt:
+        update_cache: yes
+        upgrade: dist
+
     - name: Install required packages for hyper-v
       apt: name={{item}} state=installed
       with_items:

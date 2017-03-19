@@ -14,3 +14,6 @@ Infrastructure related stuff
 1. Add ssh keys to host: `ssh-copy-id -p N022 hyperv.zhaw.tk`
 1. Test ansible connectivity: `ansible linux -m ping -i hosts`
 1. Run ansible playbook: `ansible-playbook -i hosts basic_setup.yml -K`
+
+## Run arbitrary command on linux VMs
+Using ansible: `ansible linux -m shell -a "echo command" -i hosts [--become -K]`

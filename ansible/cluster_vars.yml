@@ -1,5 +1,4 @@
-admission_token=TO-BE-SET
-api_dns_name=master.zhaw.tk
-service_cidr=10.96.0.0/12
-cluster_domain=cluster.local
-kubernetes_version=v1.5.1
+api_dns_name: master.zhaw.tk
+service_cidr: 10.96.0.0/12
+cluster_domain: cluster.local
+kubernetes_version: v1.5.1

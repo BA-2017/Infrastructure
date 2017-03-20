@@ -15,8 +15,7 @@
       args:
         creates: /etc/kubernetes/pki
       register: master_init
-    - debug:
-        var: master_init.stdout_lines
+    - debug: var=master_init.stdout_lines
     - name: Copy kubectl from master
       fetch:
         src: /etc/kubernetes/admin.conf
@@ -37,6 +36,4 @@
       tags:
         - nodes
         - join
-
-    - debug:
-        var: node_join.stdout_lines
+    - debug: var=node_join.stdout_lines

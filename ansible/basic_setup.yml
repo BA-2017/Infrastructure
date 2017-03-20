@@ -1,5 +1,5 @@
 # 1. install python on target hosts
-# 2. run playbook: ansible-playbook -i hosts basic_setup.yml -K
+# 2. run playbook: ansible-playbook -i hosts basic_setup.yml -K --extra-vars "DNSimpleToken=TOKEN"
 ---
 - hosts: linux
   become: true
@@ -38,4 +38,4 @@
       cron:
         name: "Set dDNS"
         minute: "*"
-        job: "ddns.sh > /var/log/ddns.log 2>&1"
+        job: "export DNSimpleToken={{DNSimpleToken}}; ddns.sh >> /var/log/ddns.log 2>&1"

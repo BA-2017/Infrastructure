@@ -1,0 +1,42 @@
+# run playbook: ansible-playbook -i hosts create_cluster.yml -K --extra-vars "admission_token=TOKEN"
+---
+- hosts: cluster
+  become: true
+  roles:
+    - kube_node
+
+- hosts: master
+  become: true
+  vars_files:
+    - cluster_vars.yml
+  tasks:
+    - name: Initialize master
+      command: kubeadm init --token {{ admission_token }} --api-external-dns-names {{ api_dns_name }} --service-cidr {{ service_cidr }} --service-dns-domain {{ cluster_domain }} --use-kubernetes-version {{ kubernetes_version }}
+      args:
+        creates: /etc/kubernetes/pki
+      register: master_init
+    - debug:
+        var: master_init.stdout_lines
+    - name: Copy kubectl from master
+      fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: remotes/{{ cluster_domain }}.conf
+        flat: true
+
+- hosts: nodes
+  become: true
+  vars_files:
+    - cluster_vars.yml
+  tasks:
+    - name: Join cluster
+      command: kubeadm join --token {{ admission_token }} {{ api_dns_name }}
+      args:
+        creates: /etc/kubernetes/kubelet.conf
+      register: node_join
+      ignore_errors: true
+      tags:
+        - nodes
+        - join
+
+    - debug:
+        var: node_join.stdout_lines

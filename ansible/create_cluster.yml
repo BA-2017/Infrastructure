@@ -11,9 +11,9 @@
     - cluster_vars.yml
   tasks:
     - name: Initialize master
-      command: kubeadm init --token {{ admission_token }} --api-external-dns-names {{ api_dns_name }} --service-cidr {{ service_cidr }} --service-dns-domain {{ cluster_domain }} --use-kubernetes-version {{ kubernetes_version }}
+      command: kubeadm init --token {{ admission_token }} --api-advertise-addresses {{ api_dns_name }} --api-external-dns-names {{ api_dns_name }} --service-cidr {{ service_cidr }} --service-dns-domain {{ cluster_domain }} --use-kubernetes-version {{ kubernetes_version }}
       args:
-        creates: /etc/kubernetes/pki
+        creates: /etc/kubernetes/kubelet.conf
       register: master_init
     - debug: var=master_init.stdout_lines
     - name: Copy kubectl from master

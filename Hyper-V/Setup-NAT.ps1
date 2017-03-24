@@ -15,3 +15,6 @@ Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress
 
 # 6. Port forwarding host:3022 => linux3(172.21.21.103):22
 Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress 0.0.0.0 -InternalIPAddress 172.21.21.103 -InternalPort 22 -ExternalPort 3022
+
+# 7. Port forwarding host:3399 => windows1(172.21.21.201):3389
+Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress 0.0.0.0 -InternalIPAddress 172.21.21.201 -InternalPort 3389 -ExternalPort 3399

@@ -28,14 +28,8 @@
         group: root
         mode: "u+x"
 
-    - name: Replace DNS record id in dDNS script
-      replace:
-        destfile: "/usr/bin/ddns.sh"
-        regexp: '{RECORD_ID}'
-        replace: '{{dns_record_id}}'
-
     - name: Setup dDNS crontab
       cron:
         name: "Set dDNS"
         minute: "*"
-        job: "export DNSimpleToken={{DNSimpleToken}}; ddns.sh >> /var/log/ddns.log 2>&1"
+        job: "export DNSimpleToken={{ DNSimpleToken }} DNSimpleRecordID={{ dns_record_id }}; ddns.sh >> /var/log/ddns.log 2>&1"

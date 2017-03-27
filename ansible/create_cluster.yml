@@ -3,7 +3,7 @@
 - hosts: cluster
   become: true
   roles:
-    - kube_node
+    - kube_member
 
 - hosts: master
   become: true

@@ -33,8 +33,6 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 10
           timeoutSeconds: 1
-        nodeSelector:
-          role: load-balancer
         ports:
         - containerPort: 80
           hostPort: 80
@@ -52,3 +50,5 @@ spec:
         args:
         - /nginx-ingress-controller
         - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
+      nodeSelector:
+          role: load-balancer

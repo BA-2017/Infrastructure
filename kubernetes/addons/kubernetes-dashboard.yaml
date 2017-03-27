@@ -20,7 +20,7 @@ kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
   labels:
-    app: kubernetes-dashboard
+    k8s-app: kubernetes-dashboard
   name: kubernetes-dashboard
   namespace: kube-system
 spec:
@@ -28,11 +28,12 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: kubernetes-dashboard
+      k8s-app: kubernetes-dashboard
   template:
     metadata:
       labels:
-        app: kubernetes-dashboard
+        k8s-app: kubernetes-dashboard
+        version: v1.6.0
       # Comment the following annotation if Dashboard must not be deployed on master
       annotations:
         scheduler.alpha.kubernetes.io/tolerations: |
@@ -68,7 +69,7 @@ kind: Service
 apiVersion: v1
 metadata:
   labels:
-    app: kubernetes-dashboard
+    k8s-app: kubernetes-dashboard
   name: kubernetes-dashboard
   namespace: kube-system
 spec:
@@ -77,13 +78,16 @@ spec:
   - port: 80
     targetPort: 9090
   selector:
-    app: kubernetes-dashboard
+    k8s-app: kubernetes-dashboard
 ---
 kind: Ingress
 apiVersion: extensions/v1beta1
 metadata:
   name: dashboard
   namespace: kube-system
+  annotations:
+    ingress.kubernetes.io/auth-signin: https://$host/oauth2/sign_in
+    ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
 spec:
   rules:
   - host: dashboard.zhaw.tk
@@ -93,3 +97,18 @@ spec:
         backend:
           serviceName: kubernetes-dashboard
           servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: oauth2-proxy
+  namespace: kube-system
+spec:
+  rules:
+  - host: dashboard.zhaw.tk
+    http:
+      paths:
+      - path: /oauth2
+        backend:
+          serviceName: oauth2-proxy
+          servicePort: 4180

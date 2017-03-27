@@ -27,10 +27,10 @@ spec:
         - name: OAUTH2_PROXY_CLIENT_ID
           value: afc830fc7b0ba03d51a8
         - name: OAUTH2_PROXY_CLIENT_SECRET
-          value: 717d93a10f174e1b0e9bfc6899a918a6c21720b5
+          value: SECRET
         # python -c 'import os,base64; print base64.b64encode(os.urandom(16))'
         - name: OAUTH2_PROXY_COOKIE_SECRET
-          value: ALSZdXq3i633djl9ZPkut2Dr
+          value: SECRET
         image: docker.io/colemickens/oauth2_proxy:latest
         imagePullPolicy: Always
         name: oauth2-proxy

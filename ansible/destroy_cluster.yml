@@ -1,0 +1,11 @@
+# run playbook: ansible-playbook -i hosts create_cluster.yml -K
+---
+- hosts: cluster
+  become: true
+  tasks:
+    - name: Reset cluster
+      command: kubeadm reset
+      args:
+        removes: /etc/kubernetes/kubelet.conf
+      register: cluster_reset
+    - debug: var=cluster_reset.stdout_lines

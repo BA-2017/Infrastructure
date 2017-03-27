@@ -7,5 +7,4 @@
       command: kubeadm reset
       args:
         removes: /etc/kubernetes/kubelet.conf
-      register: cluster_reset
-    - debug: var=cluster_reset.stdout_lines
+        

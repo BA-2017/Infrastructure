@@ -21,34 +21,35 @@ spec:
         - --email-domain=*
         - --upstream=file:///dev/null
         - --http-address=0.0.0.0:4180
+        - --cookie-secure=false
+        - --skip-provider-button=true
+        - --version=false
         # Register a new application
         # https://github.com/settings/applications/new
         env:
         - name: OAUTH2_PROXY_CLIENT_ID
           valueFrom:
-                  secretKeyRef:
-                    name: github-oauth-credentials
-                    key: client-id
+            secretKeyRef:
+              name: github-oauth-credentials
+              key: client-id
         - name: OAUTH2_PROXY_CLIENT_SECRET
           valueFrom:
-                secretKeyRef:
-                  name: github-oauth-credentials
-                  key: client-secret
+            secretKeyRef:
+              name: github-oauth-credentials
+              key: client-secret
         # python -c 'import os,base64; print base64.b64encode(os.urandom(16))'
         - name: OAUTH2_PROXY_COOKIE_SECRET
           valueFrom:
-                secretKeyRef:
-                  name: github-oauth-credentials
-                  key: cookie-secret
+            secretKeyRef:
+              name: github-oauth-credentials
+              key: cookie-secret
         image: docker.io/colemickens/oauth2_proxy:latest
         imagePullPolicy: Always
         name: oauth2-proxy
         ports:
         - containerPort: 4180
           protocol: TCP
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:

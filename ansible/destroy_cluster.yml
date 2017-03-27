@@ -5,6 +5,3 @@
   tasks:
     - name: Reset cluster
       command: kubeadm reset
-      args:
-        removes: /etc/kubernetes/kubelet.conf
-        

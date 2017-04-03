@@ -3,6 +3,6 @@
 kubeadm_packages:
   - docker.io
   - kubelet
-  - kubeadm
+  - kubeadm=1.5.6-00
   - kubectl
   - kubernetes-cni

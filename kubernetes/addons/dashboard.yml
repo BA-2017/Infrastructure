@@ -68,8 +68,12 @@ metadata:
   name: dashboard
   namespace: kube-system
   annotations:
-    ingress.kubernetes.io/auth-signin: https://$host/oauth2/sign_in
-    ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+    # type of authentication
+    ingress.kubernetes.io/auth-type: basic
+    # name of the secret that contains the user/password definitions
+    ingress.kubernetes.io/auth-secret: dashboard-auth
+    # message to display with an appropiate context why the authentication is required
+    ingress.kubernetes.io/auth-realm: "Authentication Required - k8 dashboard"
 spec:
   rules:
   - host: dashboard.zhaw.tk
@@ -79,22 +83,3 @@ spec:
         backend:
           serviceName: kube-dashboard
           servicePort: 80
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: dashboard-oauth2-proxy
-  namespace: kube-system
-spec:
-  rules:
-  - host: dashboard.zhaw.tk
-    http:
-      paths:
-      - backend:
-          serviceName: oauth2-proxy
-          servicePort: 4180
-        path: /oauth2
-  tls:
-  - hosts:
-    - dashboard.zhaw.tk
-    secretName: dashboard-tls

@@ -64,11 +64,13 @@ spec:
       labels:
         k8s-app: nginx-ingress-controller
       annotations:
-        scheduler.alpha.kubernetes.io/tolerations: | 
+        scheduler.alpha.kubernetes.io/tolerations: |
           [
             {
               "key": "dedicated",
-              "value": "master"
+              "operator": "Equal",
+              "value": "master",
+              "effect": "NoSchedule"
             }
           ]
     spec:

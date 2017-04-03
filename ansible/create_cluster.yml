@@ -12,6 +12,8 @@
   tasks:
     - name: Initialize master
       command: kubeadm init --token {{ admission_token }} --api-external-dns-names {{ api_dns_name }} --service-cidr {{ service_cidr }} --service-dns-domain {{ cluster_domain }} --use-kubernetes-version {{ kubernetes_version }}
+      async: 60
+      poll: 5
       args:
         creates: /etc/kubernetes/kubelet.conf
       register: master_init
@@ -28,7 +30,7 @@
     - cluster_vars.yml
   tasks:
     - name: Join cluster
-      command: kubeadm join --token {{ admission_token }} {{ api_dns_name }}
+      command: kubeadm join --token {{ admission_token }} {{ master_ip_addr }}
       args:
         creates: /etc/kubernetes/kubelet.conf
       register: node_join

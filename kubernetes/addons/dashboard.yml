@@ -49,6 +49,7 @@ metadata:
   labels:
     k8s-app: kubernetes-dashboard
     kubernetes.io/cluster-service: "true"
+    kubernetes.io/name: Dashboard
     addonmanager.kubernetes.io/mode: Reconcile
 spec:
   selector:
@@ -62,6 +63,9 @@ apiVersion: extensions/v1beta1
 metadata:
   name: dashboard
   namespace: kube-system
+  labels:
+    # let kube-cert-manager generate an SSL certificate
+    stable.k8s.psg.io/kcm.class: "default"
   annotations:
     # type of authentication
     ingress.kubernetes.io/auth-type: basic
@@ -70,6 +74,10 @@ metadata:
     # message to display with an appropiate context why the authentication is required
     ingress.kubernetes.io/auth-realm: "Authentication Required - k8 dashboard"
 spec:
+  tls:
+  - hosts:
+    - dashboard.zhaw.tk
+    secretName: dashboard-tls-cert
   rules:
   - host: dashboard.zhaw.tk
     http:

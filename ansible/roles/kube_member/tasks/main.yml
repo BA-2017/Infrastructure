@@ -8,7 +8,7 @@
 
 - name: Add Kubernetes apt repo
   apt_repository:
-    repo: 'deb http://apt.kubernetes.io/ kubernetes-xenial-unstable main'
+    repo: 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
     filename: kubernetes
     state: present
 

@@ -27,3 +27,9 @@ Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress
 
 # HTTPS ingress to Kubernetes: host:443 => master:443
 Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress 0.0.0.0 -InternalIPAddress 172.21.21.101 -Internalp 443 -Externalp 443
+
+# Removes HTTPS ingress to Kubernetes
+Remove-NetNatStaticMapping -NatName MyNATnetwork -StaticMappingID 6
+
+# HTTPS port forwarding for AD FS: host:443 => windows1(172.21.21.201):443
+Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress 0.0.0.0 -InternalIPAddress 172.21.21.201 -Internalp 443 -Externalp 443

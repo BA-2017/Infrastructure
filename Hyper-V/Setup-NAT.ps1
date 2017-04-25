@@ -25,8 +25,8 @@ Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress
 # HTTP ingress to Kubernetes: host:80 => master:80
 Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress 0.0.0.0 -InternalIPAddress 172.21.21.101 -Internalp 80 -Externalp 80
 
-# HTTPS ingress to Kubernetes: host:443 => master:443
-Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress 0.0.0.0 -InternalIPAddress 172.21.21.101 -Internalp 443 -Externalp 443
+# HTTPS ingress to Kubernetes: host:4443 => master:443
+Add-NetNatStaticMapping -NatName 'MyNATnetwork' -Protocol TCP -ExternalIPAddress 0.0.0.0 -InternalIPAddress 172.21.21.101 -Internalp 443 -Externalp 4443
 
 # Removes HTTPS ingress to Kubernetes
 Remove-NetNatStaticMapping -NatName MyNATnetwork -StaticMappingID 6

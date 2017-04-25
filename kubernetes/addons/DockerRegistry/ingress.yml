@@ -1,0 +1,29 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: registry
+  namespace: kube-system
+  labels:
+    # let kube-cert-manager generate an SSL certificate
+    stable.k8s.psg.io/kcm.class: "default"
+  annotations:
+    ingress.kubernetes.io/configuration-snippet: |
+      chunked_transfer_encoding on;
+      proxy_set_header  Host              $http_host;   # required for docker client's sake
+      proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+      proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+      proxy_set_header  X-Forwarded-Proto $scheme;
+      add_header 'Docker-Distribution-Api-Version' 'registry/2.0' always;
+spec:
+  tls:
+  - hosts:
+    - registry.zhaw.tk
+    secretName: registry-tls-cert
+  rules:
+  - host: registry.zhaw.tk
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: registry
+          servicePort: 5000

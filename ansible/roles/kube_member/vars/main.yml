@@ -6,3 +6,4 @@ kubeadm_packages:
   - kubeadm #=1.5.6-00
   - kubectl
   - kubernetes-cni
+  - nfs-common # for NFS PersistentVolume

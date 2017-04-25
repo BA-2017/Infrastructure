@@ -1,3 +1,38 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: heapster
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespace
+  - nodes
+  - pods
+  verbs:
+  - list
+  - watch
+  - get
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: heapster
+  namespace: kube-system
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: heapster
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: heapster
+subjects:
+- kind: ServiceAccount
+  name: heapster
+  namespace: kube-system
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -11,6 +46,7 @@ spec:
         task: monitoring
         k8s-app: heapster
     spec:
+      serviceAccountName: heapster
       containers:
       - name: heapster
         image: gcr.io/google_containers/heapster-amd64:v1.3.0-beta.1

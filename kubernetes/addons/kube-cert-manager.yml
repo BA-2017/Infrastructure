@@ -1,3 +1,73 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cert-manager
+  namespace: kube-system
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+    name: cert-manager
+    namespace: kube-system  
+rules:
+- apiGroups:
+  - ""
+  - "extensions"
+  resources:
+  - configmaps
+  - secrets
+  - services
+  - endpoints
+  - ingresses
+  - nodes
+  - pods
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
+  - "extensions"
+  - ""
+  resources:
+  - ingresses
+  - ingresses/status
+  verbs:
+  - get
+  - update
+  - create
+  - list
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - "*"
+  - ""
+  resources:
+  - events
+  - certificates
+  - secrets
+  verbs:
+  - create
+  - list
+  - update
+  - get
+  - patch
+  - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cert-manager
+  namespace: kube-system
+subjects:
+  - kind: ServiceAccount
+    namespace: kube-system
+    name: cert-manager
+roleRef:
+  kind: ClusterRole
+  name: cert-manager
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: extensions/v1beta1
 kind: ThirdPartyResource
 description: "A specification of a Let's Encrypt Certificate to manage."
@@ -24,6 +94,7 @@ spec:
         k8s-app: kubernetes-cert-manager
       name: kubernetes-cert-manager
     spec:
+      serviceAccountName: cert-manager
       containers:
         - name: kubernetes-cert-manager
           image: rosskukulinski/kube-cert-manager:0.5.0

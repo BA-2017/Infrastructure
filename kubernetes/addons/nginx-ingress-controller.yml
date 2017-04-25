@@ -63,16 +63,6 @@ spec:
     metadata:
       labels:
         k8s-app: nginx-ingress-controller
-      annotations:
-        scheduler.alpha.kubernetes.io/tolerations: |
-          [
-            {
-              "key": "dedicated",
-              "operator": "Equal",
-              "value": "master",
-              "effect": "NoSchedule"
-            }
-          ]
     spec:
       # hostNetwork makes it possible to use ipv6 and to preserve the source IP correctly regardless of docker configuration
       # however, it is not a hard dependency of the nginx-ingress-controller itself and it may cause issues if port 10254 already is taken on the host
@@ -80,6 +70,12 @@ spec:
       # like with kubeadm
       hostNetwork: true
       terminationGracePeriodSeconds: 60
+      nodeSelector:
+          role: loadbalancer
+      tolerations: 
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
       containers:
       - image: gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.3
         name: nginx-ingress-controller
@@ -112,5 +108,3 @@ spec:
         args:
         - /nginx-ingress-controller
         - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
-      nodeSelector:
-          role: load-balancer

@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    component: kube-apiserver
+    tier: control-plane
+  name: kube-apiserver
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - kube-apiserver
+    - --allow-privileged=true
+    - --experimental-bootstrap-token-auth=true
+    - --requestheader-extra-headers-prefix=X-Remote-Extra-
+    - --kubelet-client-certificate=/etc/kubernetes/pki/apiserver-kubelet-client.crt
+    - --runtime-config=extensions/v1beta1=true
+    - --runtime-config=extensions/v1beta1/ingress=true
+    - --runtime-config=extensions/v1beta1/deployment=true
+    - --runtime-config=api/all=true
+    - --runtime-config=api/legacy=true
+    - --secure-port=6443
+    - --requestheader-group-headers=X-Remote-Group
+    - --service-account-key-file=/etc/kubernetes/pki/sa.pub
+    - --client-ca-file=/etc/kubernetes/pki/ca.crt
+    - --tls-private-key-file=/etc/kubernetes/pki/apiserver.key
+    - --kubelet-client-key=/etc/kubernetes/pki/apiserver-kubelet-client.key
+    - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --requestheader-allowed-names=front-proxy-client
+    - --service-cluster-ip-range=10.96.0.0/12
+    - --tls-cert-file=/etc/kubernetes/pki/apiserver.crt
+    - --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.crt
+    - --insecure-port=0
+    - --storage-backend=etcd3
+    - --requestheader-username-headers=X-Remote-User
+    - --authorization-mode=RBAC,ABAC
+    - --authorization-policy-file=/etc/kubernetes/abac-policy.json
+    - --advertise-address=172.21.21.101
+    - --etcd-servers=http://127.0.0.1:2379
+    image: gcr.io/google_containers/kube-apiserver-amd64:v1.6.0
+    livenessProbe:
+      failureThreshold: 8
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: 6443
+        scheme: HTTPS
+      initialDelaySeconds: 15
+      timeoutSeconds: 15
+    name: kube-apiserver
+    resources:
+      requests:
+        cpu: 250m
+    volumeMounts:
+    - mountPath: /etc/kubernetes/
+      name: k8s
+      readOnly: true
+    - mountPath: /etc/ssl/certs
+      name: certs
+  hostNetwork: true
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes
+    name: k8s
+  - hostPath:
+      path: /etc/ssl/certs
+    name: certs
+status: {}

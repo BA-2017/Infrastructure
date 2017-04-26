@@ -129,7 +129,7 @@ spec:
     spec:
       containers:
       - name: elasticsearch-logging
-        image: elasticsearch:5.3-alpine
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.3.1
         resources:
           requests:
             cpu: "25m"
@@ -137,6 +137,19 @@ spec:
           limits:
             cpu: "100m"
             memory: "2Gi"
+        env:
+          - name: "http_host"
+            value: "0.0.0.0"
+          - name: "ES_JAVA_OPTS"
+            value: "-Xms512m -Xmx512m"
+          - name: "bootstrap_memory_lock"
+            value: "true"
+        securityContext:
+          privileged: false
+          capabilities:
+            add:
+              - IPC_LOCK
+              - SYS_RESOURCE
         ports:
         - containerPort: 9200
           name: elasticsearch

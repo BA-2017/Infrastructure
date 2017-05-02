@@ -112,6 +112,25 @@ spec:
   accessModes:
     - ReadWriteOnce
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-logging-config
+  namespace: kube-system
+data:
+  elasticsearch.yml: |
+    cluster.name: "docker-cluster"
+    network.host: 0.0.0.0
+    # minimum_master_nodes need to be explicitly set when bound on a public IP
+    # set to 1 to allow single node clusters
+    # Details: https://github.com/elastic/elasticsearch/pull/17288
+    discovery.zen.minimum_master_nodes: 1
+    http.host: 0.0.0.0
+    http.port: 9200
+    transport.host: 127.0.0.1
+    xpack.security.enabled: false
+    bootstrap.memory_lock: true
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -129,7 +148,12 @@ spec:
     spec:
       containers:
       - name: elasticsearch-logging
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.3.1
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.3.2
+        volumeMounts:
+        - name: elasticsearch-config
+          mountPath: /usr/share/elasticsearch/user-config
+        - name: elasticsearch-data
+          mountPath: /usr/share/elasticsearch/data
         resources:
           requests:
             cpu: "25m"
@@ -137,38 +161,40 @@ spec:
           limits:
             cpu: "100m"
             memory: "2Gi"
-        env:
-          - name: "http_host"
-            value: "0.0.0.0"
-          - name: "ES_JAVA_OPTS"
-            value: "-Xms512m -Xmx512m"
-          - name: "bootstrap_memory_lock"
-            value: "true"
         securityContext:
-          privileged: false
-          capabilities:
-            add:
-              - IPC_LOCK
-              - SYS_RESOURCE
+          privileged: true
+        env:
+          - name: "ES_JAVA_OPTS"
+            value: "-Xms1536m -Xmx1536m"
+        lifecycle:
+            postStart:
+              exec:
+                command:
+                  - ln
+                  - -fs
+                  - /usr/share/elasticsearch/user-config/elasticsearch.yml
+                  - /usr/share/elasticsearch/config/elasticsearch.yml
         ports:
         - containerPort: 9200
-          name: elasticsearch
-          protocol: TCP
         #readinessProbe:
         #  httpGet:
         #    path: /_cluster/health
         #    port: 9200
         #    scheme: HTTP
+        #  initialDelaySeconds: 60
         #livenessProbe:
         #  httpGet:
         #    path: /_cluster/health
         #    port: 9200
         #    scheme: HTTP
-        #  initialDelaySeconds: 30
+        #  initialDelaySeconds: 60
       volumes:
       - name: elasticsearch-data
         persistentVolumeClaim:
           claimName: elasticsearch-logging
+      - name: elasticsearch-config
+        configMap:
+          name: elasticsearch-logging-config
 ---
 apiVersion: v1
 kind: Service
@@ -183,7 +209,7 @@ spec:
     k8s-app: elasticsearch-logging
   ports:
   - port: 9200
-    targetPort: elasticsearch
+    targetPort: 9200
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment

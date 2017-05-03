@@ -157,15 +157,15 @@ spec:
         resources:
           requests:
             cpu: "25m"
-            memory: "2Gi"
+            memory: "2.5Gi"
           limits:
             cpu: "100m"
-            memory: "2Gi"
+            memory: "5Gi"
         securityContext:
           privileged: true
         env:
           - name: "ES_JAVA_OPTS"
-            value: "-Xms1536m -Xmx1536m"
+            value: "-Xms2048m -Xmx2048m"
         lifecycle:
             postStart:
               exec:

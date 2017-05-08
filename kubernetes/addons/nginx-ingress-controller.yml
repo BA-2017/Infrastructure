@@ -153,6 +153,16 @@ spec:
   selector:
     k8s-app: default-http-backend
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-configuration
+  namespace: kube-system
+data:
+  proxy-connect-timeout: "10"
+  proxy-read-timeout: "120"
+  proxy-send-timeout: "120"
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -181,7 +191,7 @@ spec:
         effect: "NoSchedule"
       serviceAccountName: ingress-controller
       containers:
-      - image: gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.3
+      - image: gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.5
         name: nginx-ingress-controller
         readinessProbe:
           httpGet:
@@ -212,3 +222,4 @@ spec:
         args:
         - /nginx-ingress-controller
         - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
+        - --configmap=$(POD_NAMESPACE)/nginx-ingress-configuration

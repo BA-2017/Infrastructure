@@ -279,7 +279,7 @@ spec:
 kind: Ingress
 apiVersion: extensions/v1beta1
 metadata:
-  name: registry
+  name: kibana
   namespace: kube-system
   labels:
     # let kube-cert-manager generate an SSL certificate

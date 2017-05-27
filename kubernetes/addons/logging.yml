@@ -134,6 +134,7 @@ data:
     transport.host: 127.0.0.1
     xpack.security.enabled: false
     bootstrap.memory_lock: true
+    xpack.monitoring.enabled: false
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -156,15 +157,15 @@ spec:
         volumeMounts:
         - name: elasticsearch-config
           mountPath: /usr/share/elasticsearch/user-config
-        - name: elasticsearch-data
-          mountPath: /usr/share/elasticsearch/data
+        #- name: elasticsearch-data
+        #  mountPath: /usr/share/elasticsearch/data
         resources:
           requests:
             cpu: "25m"
-            memory: "2.5Gi"
+            memory: "4Gi"
           limits:
             cpu: "100m"
-            memory: "5Gi"
+            memory: "6Gi"
         securityContext:
           privileged: true
         env:
@@ -236,7 +237,7 @@ spec:
     spec:
       containers:
       - name: kibana-logging
-        image: kibana:5.3
+        image: kibana:5.3.0
         resources:
           # keep request = limit to keep this container in guaranteed class
           limits:
@@ -246,6 +247,10 @@ spec:
         env:
           - name: "ELASTICSEARCH_URL"
             value: "http://elasticsearch-logging:9200"
+          - name: "ELASTICSEARCH_REQUESTTIMEOUT"
+            value: "5000"
+          - name: "ELASTICSEARCH_PINGTIMEOUT"
+            value: "5000"
         ports:
         - containerPort: 5601
           name: ui
